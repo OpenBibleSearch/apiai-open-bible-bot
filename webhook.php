@@ -33,54 +33,97 @@ $result = $_POST['result'];
  */
 switch ($result['action']) {
     case 'ESV_Passage':
+    case 'ESV_VOTD':
         break;
     default:
         leave();
 }
+$webhook = null;
 
 
 /**
- * Handle the bb action
+ * Handle the ESV_Passage action
  */
-$pattern = '/^(?:!)?(?:(bb)|(biblebot)|(bible)|(esv)|(kjv)\\s+)/i';
+if ($result['action'] == 'ESV_Passage') {
+    $pattern = '/^(?:!)?(?:(bb)|(biblebot)|(bible)|(esv)|(kjv)\\s+)/i';
 
-$query = preg_replace($pattern, '', trim($result['resolvedQuery']));
-$query = preg_replace('/\s+/', '+', $query);
+    $query = preg_replace($pattern, '', trim($result['resolvedQuery']));
+    $query = preg_replace('/\s+/', '+', $query);
 
-//$pattern = /(?:(?:[123]|I{1,3})\s*)?(?:[A-Z][a-zA-Z]+|Song of Songs|Song of Solomon).?\s*(?:1?[0-9]?[0-9]):\s*\d{1,3}(?:[,-]\s*\d{1,3})*(?:;\s*(?:(?:[123]|I{1,3})\s*)?(?:[A-Z][a-zA-Z]+|Song of Songs|Song of Solomon)?.?\s*(?:1?[0-9]?[0-9]):\s*\d{1,3}(?:[,-]\s*\d{1,3})*)*/i;
+    //$pattern = /(?:(?:[123]|I{1,3})\s*)?(?:[A-Z][a-zA-Z]+|Song of Songs|Song of Solomon).?\s*(?:1?[0-9]?[0-9]):\s*\d{1,3}(?:[,-]\s*\d{1,3})*(?:;\s*(?:(?:[123]|I{1,3})\s*)?(?:[A-Z][a-zA-Z]+|Song of Songs|Song of Solomon)?.?\s*(?:1?[0-9]?[0-9]):\s*\d{1,3}(?:[,-]\s*\d{1,3})*)*/i;
 
 
-// Web service URL
-$url = ESV_BASEURL . "/passageQuery?key=" . ESV_KEY . "&passage={$query}&include-headings=false&output-format=plain-text";
+    // Web service URL
+    $url = ESV_BASEURL . "/passageQuery?key=" . ESV_KEY . "&passage={$query}&include-headings=false&output-format=plain-text";
 
-// Set up CURL
-$ch = curl_init($url);
-curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    // Set up CURL
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-// Execute the POST request
-$data = curl_exec($ch);
+    // Execute the POST request
+    $data = curl_exec($ch);
 
-// Close the connection
-curl_close($ch);
+    // Close the connection
+    curl_close($ch);
 
-// Parse the response
-$text = preg_replace('/=+\\n/i', '', $data);
-$text = preg_replace('/_+/i', '', $text);
+    // Parse the response
+    $text = preg_replace('/=+\\n/i', '', $data);
+    $text = preg_replace('/_+/i', '', $text);
+
+
+    /**
+     * Format a webhook response object to be returned by the webhook.
+     */
+    $webhook = new stdClass();
+    $webhook->speech = $text;
+    $webhook->displayText = $text;
+    //$webhook->data = new stdClass();
+    //$webhook->data->contextOut = Array(
+    //        new stdClass()
+    //);
+    $webhook->source = 'apiai-openbible-bot';
+}
 
 
 /**
- * Format a webhook response object to be returned by the webhook.
+ * Handle the ESV_VOTD action
  */
-$webhook = new stdClass();
-$webhook->speech = $text;
-$webhook->displayText = $text;
-//$webhook->data = new stdClass();
-//$webhook->data->contextOut = Array(
-//        new stdClass()
-//);
-$webhook->source = 'apiai-openbible-bot';
+if ($result['action'] == 'ESV_VOTD') {
+
+    // Web service URL
+    $url = ESV_BASEURL . "/dailyVerse?key=" . ESV_KEY . "&include-headings=false&output-format=plain-text";
+
+    // Set up CURL
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    // Execute the POST request
+    $data = curl_exec($ch);
+
+    // Close the connection
+    curl_close($ch);
+
+    // Parse the response
+    $text = preg_replace('/=+\\n/i', '', $data);
+    $text = preg_replace('/_+/i', '', $text);
+
+
+    /**
+     * Format a webhook response object to be returned by the webhook.
+     */
+    $webhook = new stdClass();
+    $webhook->speech = $text;
+    $webhook->displayText = $text;
+    //$webhook->data = new stdClass();
+    //$webhook->data->contextOut = Array(
+    //        new stdClass()
+    //);
+    $webhook->source = 'apiai-openbible-bot';
+}
 
 
 /**
