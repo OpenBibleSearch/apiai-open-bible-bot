@@ -8,6 +8,7 @@ require_once('config.php');
 $_POST = json_decode(file_get_contents('php://input'), true);
 //$_POST = json_decode(file_get_contents('jsontest.js'), true);
 
+
 /**
  * If there was an error parsing the JSON, we should probably bail here.
  */
@@ -66,6 +67,8 @@ curl_close($ch);
 
 // Parse the response
 $text = preg_replace('/^=+\\n/i', '', $data);
+$text = preg_replace('/_+/i', '_______________', $data);
+$text = preg_replace('/=+/i', '===============', $data);
 
 $speech = $text;
 $displayText = $text;
@@ -90,7 +93,7 @@ $webhook->source = 'apiai-openbible-bot';
 header('Content-type: application/json;charset=utf-8');
 echo json_encode($webhook);
 
-leave();
+exit();
 
 function leave() {
     $webhook = new stdClass();
