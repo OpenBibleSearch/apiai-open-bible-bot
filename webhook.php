@@ -66,20 +66,16 @@ $data = curl_exec($ch);
 curl_close($ch);
 
 // Parse the response
-$text = preg_replace('/^=+\\n/i', '', $data);
-$text = preg_replace('/_+/i', '', $data);
 $text = preg_replace('/=+\\n/i', '', $data);
-
-$speech = $text;
-$displayText = $text;
+$text = preg_replace('/_+/i', '', $text);
 
 
 /**
  * Format a webhook response object to be returned by the webhook.
  */
 $webhook = new stdClass();
-$webhook->speech = $speech;
-$webhook->displayText = $displayText;
+$webhook->speech = $text;
+$webhook->displayText = $text;
 //$webhook->data = new stdClass();
 //$webhook->data->contextOut = Array(
 //        new stdClass()
