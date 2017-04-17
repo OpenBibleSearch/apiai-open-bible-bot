@@ -1,0 +1,107 @@
+<?php
+
+require_once('config.php');
+
+/**
+ * JSON data is POSTed directly, not as a parameter. Retrieve it and decode it.
+ */
+$_POST = json_decode(file_get_contents('php://input'), true);
+
+
+/**
+ * If there was an error parsing the JSON, we should probably bail here.
+ */
+if (strlen($json_params) != 0 || json_last_error() !== JSON_ERROR_NONE)
+    leave();
+
+
+/**
+ * A simple check to see if the JSON data is structured correctly.
+ */
+if (!isset($_POST['result']) || empty($_POST['result']))
+    leave();
+
+
+/**
+ * Get the result object from our JSON. It contains the information we need.
+ */
+$result = $_POST['result'];
+
+
+/**
+ * Bail out if an action was requested that isn't supported by this webhook.
+ */
+switch ($result['action']) {
+    case 'bb':
+    case '!bible':
+    case '!esv':
+    case '!kjv':
+    case '!strongs':
+    case '!ipd':
+    case 'bbb':
+        break;
+    default:
+        leave();
+}
+
+
+/**
+ * Handle the bb action
+ */
+$pattern = /^(?:!)?[bb|biblebot|bible|esv|kjv]\s*/;
+
+$query = preg_replace($pattern, '', trim($result->resolvedQuery));
+$query = preg_replace(/\s*/, '+', $query);
+
+//$pattern = /(?:(?:[123]|I{1,3})\s*)?(?:[A-Z][a-zA-Z]+|Song of Songs|Song of Solomon).?\s*(?:1?[0-9]?[0-9]):\s*\d{1,3}(?:[,-]\s*\d{1,3})*(?:;\s*(?:(?:[123]|I{1,3})\s*)?(?:[A-Z][a-zA-Z]+|Song of Songs|Song of Solomon)?.?\s*(?:1?[0-9]?[0-9]):\s*\d{1,3}(?:[,-]\s*\d{1,3})*)*/i;
+
+
+// Web service URL
+$url = ESV_BASEURL . "/passageQuery?key=" . ESV_KEY . "&passage={$query}&include-headings=false&output-format=plain-text";
+
+// Set up CURL
+$ch = curl_init($url);
+curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+// Execute the POST request
+$data = curl_exec($ch);
+
+// Close the connection
+curl_close($ch);
+
+// Parse the response
+//$response = json_decode($data);
+
+$text = $data;
+$speech = $data;
+$displayText = $text;
+
+
+/**
+ * Format a webhook response object to be returned by the webhook.
+ */
+$webhook = new stdClass();
+$webhook->speech = $speech;
+$webhook->displayText = $displayText;
+//$webhook->data = new stdClass();
+//$webhook->data->contextOut = Array(
+//        new stdClass()
+//);
+$webhook->source = 'apiai-openbible-bot';
+
+
+/**
+ * Send the response.
+ */
+header('Content-type: application/json;charset=utf-8');
+echo json_encode($webhook);
+
+leave();
+
+function leave() {
+    exit();
+}
+
+//EOF
