@@ -67,8 +67,8 @@ curl_close($ch);
 
 // Parse the response
 $text = preg_replace('/^=+\\n/i', '', $data);
-$text = preg_replace('/_+/i', '_______________', $data);
-$text = preg_replace('/=+/i', '===============', $data);
+$text = preg_replace('/_+/i', ' ', $data);
+$text = preg_replace('/=+/i', ' ', $data);
 
 $speech = $text;
 $displayText = $text;
