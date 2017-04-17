@@ -5,8 +5,8 @@ require_once('config.php');
 /**
  * JSON data is POSTed directly, not as a parameter. Retrieve it and decode it.
  */
-//$_POST = json_decode(file_get_contents('php://input'), true);
-$_POST = json_decode(file_get_contents('jsontest.js'), true);
+$_POST = json_decode(file_get_contents('php://input'), true);
+//$_POST = json_decode(file_get_contents('jsontest.js'), true);
 
 /**
  * If there was an error parsing the JSON, we should probably bail here.
