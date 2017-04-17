@@ -11,7 +11,7 @@ $_POST = json_decode(file_get_contents('php://input'), true);
 /**
  * If there was an error parsing the JSON, we should probably bail here.
  */
-if (strlen($json_params) != 0 || json_last_error() !== JSON_ERROR_NONE)
+if (json_last_error() !== JSON_ERROR_NONE)
     leave();
 
 
@@ -48,10 +48,10 @@ switch ($result['action']) {
 /**
  * Handle the bb action
  */
-$pattern = /^(?:!)?[bb|biblebot|bible|esv|kjv]\s*/;
+$pattern = '/^(?:!)?[bb|biblebot|bible|esv|kjv]\s*/i';
 
 $query = preg_replace($pattern, '', trim($result->resolvedQuery));
-$query = preg_replace(/\s*/, '+', $query);
+$query = preg_replace('/\s*/', '+', $query);
 
 //$pattern = /(?:(?:[123]|I{1,3})\s*)?(?:[A-Z][a-zA-Z]+|Song of Songs|Song of Solomon).?\s*(?:1?[0-9]?[0-9]):\s*\d{1,3}(?:[,-]\s*\d{1,3})*(?:;\s*(?:(?:[123]|I{1,3})\s*)?(?:[A-Z][a-zA-Z]+|Song of Songs|Song of Solomon)?.?\s*(?:1?[0-9]?[0-9]):\s*\d{1,3}(?:[,-]\s*\d{1,3})*)*/i;
 
