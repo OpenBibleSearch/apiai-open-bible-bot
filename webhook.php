@@ -93,6 +93,12 @@ echo json_encode($webhook);
 leave();
 
 function leave() {
+    $webhook = new stdClass();
+    $webhook->speech = 'Webhook ended prematurely.';
+    $webhook->displayText = 'Webhook ended prematurely.';
+    $webhook->source = 'apiai-openbible-bot';
+    header('Content-type: application/json;charset=utf-8');
+    echo json_encode($webhook);
     exit();
 }
 
