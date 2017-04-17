@@ -5,8 +5,8 @@ require_once('config.php');
 /**
  * JSON data is POSTed directly, not as a parameter. Retrieve it and decode it.
  */
-$_POST = json_decode(file_get_contents('php://input'), true);
-
+//$_POST = json_decode(file_get_contents('php://input'), true);
+$_POST = json_decode(file_get_contents('jsontest.js'), true);
 
 /**
  * If there was an error parsing the JSON, we should probably bail here.
@@ -27,18 +27,11 @@ if (!isset($_POST['result']) || empty($_POST['result']))
  */
 $result = $_POST['result'];
 
-
 /**
  * Bail out if an action was requested that isn't supported by this webhook.
  */
 switch ($result['action']) {
-    case 'bb':
-    case '!bible':
-    case '!esv':
-    case '!kjv':
-    case '!strongs':
-    case '!ipd':
-    case 'bbb':
+    case 'ESV_Passage':
         break;
     default:
         leave();
@@ -48,10 +41,10 @@ switch ($result['action']) {
 /**
  * Handle the bb action
  */
-$pattern = '/^(?:!)?[bb|biblebot|bible|esv|kjv]\s*/i';
+$pattern = '/^(?:!)?(?:(bb)|(biblebot)|(bible)|(esv)|(kjv)\\s+)/i';
 
-$query = preg_replace($pattern, '', trim($result->resolvedQuery));
-$query = preg_replace('/\s*/', '+', $query);
+$query = preg_replace($pattern, '', trim($result['resolvedQuery']));
+$query = preg_replace('/\s+/', '+', $query);
 
 //$pattern = /(?:(?:[123]|I{1,3})\s*)?(?:[A-Z][a-zA-Z]+|Song of Songs|Song of Solomon).?\s*(?:1?[0-9]?[0-9]):\s*\d{1,3}(?:[,-]\s*\d{1,3})*(?:;\s*(?:(?:[123]|I{1,3})\s*)?(?:[A-Z][a-zA-Z]+|Song of Songs|Song of Solomon)?.?\s*(?:1?[0-9]?[0-9]):\s*\d{1,3}(?:[,-]\s*\d{1,3})*)*/i;
 
@@ -72,10 +65,9 @@ $data = curl_exec($ch);
 curl_close($ch);
 
 // Parse the response
-//$response = json_decode($data);
+$text = preg_replace('/^=+\\n/i', '', $data);
 
-$text = $data;
-$speech = $data;
+$speech = $text;
 $displayText = $text;
 
 
@@ -95,7 +87,7 @@ $webhook->source = 'apiai-openbible-bot';
 /**
  * Send the response.
  */
-header('Content-type: application/json;charset=utf-8');
+//header('Content-type: application/json;charset=utf-8');
 echo json_encode($webhook);
 
 leave();
