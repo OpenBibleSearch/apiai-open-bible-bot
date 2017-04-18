@@ -133,8 +133,9 @@ if ($result['action'] == 'ESV_VOTD') {
  */
 if ($result['action'] == 'ESV_ReadingPlan') {
 
-    // Today's date in YYYY-MM-DD format
-    $today = date('Y-m-d');
+    // Today's date (Central Time) in YYYY-MM-DD format
+    $date = new DateTime('now', new DateTimeZone('America/Chicago'));
+    $today = $date->format('Y-m-d');
 
     // Web service URL
     $url = ESV_BASEURL . "readingPlanQuery?key=IP&date={$today}&reading-plan=through-the-bible";
@@ -147,7 +148,7 @@ if ($result['action'] == 'ESV_ReadingPlan') {
 
     if (substr($short, 0, 1) == 1) {
         // Success!
-        $text = date('M j') . ' ' . substr($short, 2);
+        $text = $date->format('M j') . ' ' . substr($short, 2);
     } else {
         // Fail! Fall back to the full url.
         $text = $url;
