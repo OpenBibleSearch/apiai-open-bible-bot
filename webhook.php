@@ -159,17 +159,17 @@ if ($result['action'] == 'ESV_ReadingPlan') {
      * Shorten the url with Rebrandly
      */
     $json = file_get_contents(REBRANDLY_BASEURL . 'links/new?apikey=' . REBRANDLY_KEY
-        . '&destination={$url}&domain[fullName]=biblebot.click');
+        . "&destination={$url}&domain[fullName]=biblebot.click");
 
     $link = json_decode($json);
 
-    //if (strlen($json) > 0 && json_last_error() == JSON_ERROR_NONE) {
+    if (strlen($json) > 0 && json_last_error() == JSON_ERROR_NONE) {
         // Success!
         $text = $date->format('M j') . ' ' . $link['shortUrl'];
-    //} else {
+    } else {
         // Fail! Fall back to the full url.
-    //    $text = $url;
-    //}
+        $text = $url;
+    }
 
 
     // /**
