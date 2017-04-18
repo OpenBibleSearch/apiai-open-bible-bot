@@ -140,64 +140,7 @@ if ($result['action'] == 'ESV_ReadingPlan') {
     // Web service URL
     $url = ESV_BASEURL . "readingPlanQuery?key=IP&date={$today}&reading-plan=through-the-bible";
 
-
-    // /**
-    //  * Shorten the url with shortify
-    //  */
-    // $short = file_get_contents('http://jd.ax/api/url/shorten/?url=' . $url);
-
-    // if (substr($short, 0, 1) == 1) {
-    //     // Success!
-    //     $text = $date->format('M j') . ' ' . substr($short, 2);
-    // } else {
-    //     // Fail! Fall back to the full url.
-    //     $text = $url;
-    // }
-
-
-    /**
-     * Shorten the url with Rebrandly
-     */
-    $json = file_get_contents(REBRANDLY_BASEURL . 'links/new?apikey=' . REBRANDLY_KEY
-        . "&destination={$url}&domain[fullName]=biblebot.click");
-
-    $link = json_decode($json);
-
-    if (strlen($json) > 0 && json_last_error() == JSON_ERROR_NONE) {
-        // Success!
-        $text = $date->format('M j') . ' http://' . $link->shortUrl;
-    } else {
-        // Fail! Fall back to the full url.
-        $text = $url;
-    }
-
-
-    // /**
-    //  * Shorten the url with rebrandly
-    //  */
-    // $post_data['destination'] = $url;
-    // $post_data['slashtag'] = 'A_NEW_SLASHTAG';
-    // $post_data['title'] = 'Daily Reading Plan';
-
-    // // Set up CURL
-    // $ch = curl_init("https://api.rebrandly.com/v1/links");
-    // curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-    //     "apikey: YOUR_API_KEY",
-    //     "Content-Type: application/json"
-    // ));
-    // curl_setopt($ch, CURLOPT_POST, 1);
-    // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    // curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post_data));
-    
-    // // Execute the POST request
-    // $data = curl_exec($ch);
-    
-    // // Close the connection
-    // curl_close($ch);
-    
-    // // Parse the response
-    // $response = json_decode($data, true);
-    // $short = $response["shortUrl"];
+    $text = shortenWithRebrandly($url) ?? shortenWithShortify($url) ?? $url;
 
 
     /**
@@ -230,6 +173,39 @@ function leave() {
     header('Content-type: application/json;charset=utf-8');
     echo json_encode($webhook);
     exit();
+}
+
+
+/**
+ * Shorten the url with Rebrandly
+ */
+function shortenWithRebrandly($url) {
+    $json = file_get_contents(REBRANDLY_BASEURL . 'links/new?apikey=' . REBRANDLY_KEY
+        . "&destination={$url}&domain[fullName]=biblebot.click");
+
+    $link = json_decode($json);
+
+    if (strlen($json) > 0 && json_last_error() == JSON_ERROR_NONE) {
+        // Success!
+        return $date->format('M j') . ' http://' . $link->shortUrl;
+    }
+
+    return null;
+}
+
+
+/**
+ * Shorten the url with shortify
+ */
+function shortenWithShortify($url) {
+    $short = file_get_contents('http://jd.ax/api/url/shorten/?url=' . $url);
+
+    if (substr($short, 0, 1) == 1) {
+        // Success!
+        return $date->format('M j') . ' ' . substr($short, 2);
+    }
+
+    return null;
 }
 
 //EOF
