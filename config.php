@@ -10,4 +10,14 @@ define('ESV_BASEURL', 'http://www.esvapi.org/v2/rest/');
  */
 define('ESV_KEY', 'IP');
 
+/**
+ *
+ */
+define('REBRANDLY_BASEURL', 'https://api.rebrandly.com/v1/');
+
+/**
+ * Rebrandly API key
+ */
+define('REBRANDLY_KEY', '4cfb0754879a45c184a6340b22c1e682');
+
 //EOF

@@ -104,7 +104,7 @@ if ($result['action'] == 'ESV_VOTD') {
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-    // Execute the POST request
+    // Execute the request
     $data = curl_exec($ch);
 
     // Close the connection
@@ -141,18 +141,63 @@ if ($result['action'] == 'ESV_ReadingPlan') {
     $url = ESV_BASEURL . "readingPlanQuery?key=IP&date={$today}&reading-plan=through-the-bible";
 
 
-    /**
-     * Shorten the url with shortify
-     */
-    $short = file_get_contents('http://jd.ax/api/url/shorten/?url=' . $url);
+    // /**
+    //  * Shorten the url with shortify
+    //  */
+    // $short = file_get_contents('http://jd.ax/api/url/shorten/?url=' . $url);
 
-    if (substr($short, 0, 1) == 1) {
+    // if (substr($short, 0, 1) == 1) {
+    //     // Success!
+    //     $text = $date->format('M j') . ' ' . substr($short, 2);
+    // } else {
+    //     // Fail! Fall back to the full url.
+    //     $text = $url;
+    // }
+
+
+    /**
+     * Shorten the url with Rebrandly
+     */
+    $json = file_get_contents('https://api.rebrandly.com/v1/links/new?apikey=' . REBRANDLY_BASEURL
+        . '&destination={$url}&domain[fullName]=biblebot.click');
+
+    $link = json_decode($json);
+
+    if (strlen($json) > 0 && json_last_error() == JSON_ERROR_NONE) {
         // Success!
-        $text = $date->format('M j') . ' ' . substr($short, 2);
+        $text = $date->format('M j') . ' ' . $link['shortUrl'];
     } else {
         // Fail! Fall back to the full url.
         $text = $url;
     }
+
+
+    // /**
+    //  * Shorten the url with rebrandly
+    //  */
+    // $post_data['destination'] = $url;
+    // $post_data['slashtag'] = 'A_NEW_SLASHTAG';
+    // $post_data['title'] = 'Daily Reading Plan';
+
+    // // Set up CURL
+    // $ch = curl_init("https://api.rebrandly.com/v1/links");
+    // curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    //     "apikey: YOUR_API_KEY",
+    //     "Content-Type: application/json"
+    // ));
+    // curl_setopt($ch, CURLOPT_POST, 1);
+    // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    // curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($post_data));
+    
+    // // Execute the POST request
+    // $data = curl_exec($ch);
+    
+    // // Close the connection
+    // curl_close($ch);
+    
+    // // Parse the response
+    // $response = json_decode($data, true);
+    // $short = $response["shortUrl"];
 
 
     /**
