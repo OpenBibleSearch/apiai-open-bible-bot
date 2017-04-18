@@ -158,7 +158,7 @@ if ($result['action'] == 'ESV_ReadingPlan') {
     /**
      * Shorten the url with Rebrandly
      */
-    $json = file_get_contents('https://api.rebrandly.com/v1/links/new?apikey=' . REBRANDLY_BASEURL
+    $json = file_get_contents(REBRANDLY_BASEURL . 'links/new?apikey=' . REBRANDLY_KEY
         . '&destination={$url}&domain[fullName]=biblebot.click');
 
     $link = json_decode($json);
