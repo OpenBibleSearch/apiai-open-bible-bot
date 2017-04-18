@@ -137,31 +137,15 @@ if ($result['action'] == 'ESV_ReadingPlan') {
     $today = date('Y-m-d');
 
     // Web service URL
-    $url = ESV_BASEURL . "readingPlanQuery?key=" . ESV_KEY . "&date={$today}"
-        . "&reading-plan=through-the-bible&output-format=plain-text";
-
-    // Set up CURL
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-    // Execute the POST request
-    $data = curl_exec($ch);
-
-    // Close the connection
-    curl_close($ch);
-
-    // Parse the response
-    $text = $data;
+    $url = ESV_BASEURL . "readingPlanQuery?key=IP&date={$today}&reading-plan=through-the-bible";
 
 
     /**
      * Format a webhook response object to be returned by the webhook.
      */
     $webhook = new stdClass();
-    $webhook->speech = $text;
-    $webhook->displayText = $text;
+    $webhook->speech = $url;
+    $webhook->displayText = $url;
     //$webhook->data = new stdClass();
     //$webhook->data->contextOut = Array(
     //        new stdClass()
