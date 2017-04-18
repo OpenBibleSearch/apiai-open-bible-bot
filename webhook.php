@@ -34,7 +34,7 @@ $result = $_POST['result'];
 switch ($result['action']) {
     case 'ESV_Passage':
     case 'ESV_VOTD':
-    case 'ESD_ReadingPlan':
+    case 'ESV_ReadingPlan':
         break;
     default:
         leave();
