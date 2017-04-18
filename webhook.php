@@ -147,7 +147,7 @@ if ($result['action'] == 'ESV_ReadingPlan') {
 
     if (substr($short, 0, 1) == 1) {
         // Success!
-        $text = date('M j') . substr($short, 1);
+        $text = date('M j') . ' ' . substr($short, 2);
     } else {
         // Fail! Fall back to the full url.
         $text = $url;
