@@ -140,24 +140,22 @@ if ($result['action'] == 'ESV_ReadingPlan') {
     // Web service URL
     $url = ESV_BASEURL . "readingPlanQuery?key=IP&date={$today}&reading-plan=through-the-bible";
 
+    $text = $date->format('M j') . ' ';
+
     // this is much simpler in PHP 7+!
-    //$text = shortenWithRebrandly($url) ?? shortenWithShortify($url) ?? $url;
+    //$short = shortenWithRebrandly($url) ?? shortenWithShortify($url) ?? $url;
 
     // but, for legacy versions...
-    $short = shortenWithRebrandly($url);
-    $text = $date->format('M j');
+    $short = null;
 
-    if ($short) {
-        $text .= " {$short}";
-    } else {
-        $short = shortenWithShortify($url);
-
-        if ($short) {
-            $text .= $short;
-        } else {
-            $text .= $url;
+    if (!shortenWithRebrandly($url, $short)) {
+        if (!shortenWithShortify($url, $short)) {
+            $short = $url;
         }
     }
+
+    $text .= $short;
+
 
 
     /**
@@ -196,7 +194,7 @@ function leave() {
 /**
  * Shorten the url with Rebrandly
  */
-function shortenWithRebrandly($url) {
+function shortenWithRebrandly($url, &$short) {
     $json = file_get_contents(REBRANDLY_BASEURL . 'links/new?apikey=' . REBRANDLY_KEY
         . "&destination={$url}&domain[fullName]=biblebot.click");
 
@@ -204,25 +202,29 @@ function shortenWithRebrandly($url) {
 
     if (strlen($json) > 0 && json_last_error() == JSON_ERROR_NONE) {
         // Success!
-        return 'http://' . $link->shortUrl;
+        $short = 'http://' . $link->shortUrl;
+
+        return true;
     }
 
-    return null;
+    return false;
 }
 
 
 /**
  * Shorten the url with shortify
  */
-function shortenWithShortify($url) {
+function shortenWithShortify($url, &$short) {
     $short = file_get_contents('http://jd.ax/api/url/shorten/?url=' . $url);
 
     if (substr($short, 0, 1) == 1) {
         // Success!
-        return substr($short, 2);
+        $short = substr($short, 2);
+
+        return true;
     }
 
-    return null;
+    return false;
 }
 
 //EOF
