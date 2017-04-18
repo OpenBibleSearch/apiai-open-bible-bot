@@ -165,7 +165,7 @@ if ($result['action'] == 'ESV_ReadingPlan') {
 
     if (strlen($json) > 0 && json_last_error() == JSON_ERROR_NONE) {
         // Success!
-        $text = $date->format('M j') . ' ' . $link->shortUrl;
+        $text = $date->format('M j') . ' http://' . $link->shortUrl;
     } else {
         // Fail! Fall back to the full url.
         $text = $url;
