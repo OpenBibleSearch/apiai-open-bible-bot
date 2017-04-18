@@ -143,7 +143,7 @@ if ($result['action'] == 'ESV_ReadingPlan') {
     error_log(phpversion());
 
     if (version_compare(phpversion(), '7.0.0', 'ge')) {
-        $text = shortenWithRebrandly($url) ?? shortenWithShortify($url) ?? $url;
+        //$text = shortenWithRebrandly($url) ?? shortenWithShortify($url) ?? $url;
     } else {
         error_log("php version too low!");
     }
