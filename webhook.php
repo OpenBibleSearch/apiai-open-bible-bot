@@ -55,7 +55,7 @@ if ($result['action'] == 'ESV_Passage') {
 
 
     // Web service URL
-    $url = ESV_BASEURL . "/passageQuery?key=" . ESV_KEY . "&passage={$query}"
+    $url = ESV_BASEURL . "passageQuery?key=" . ESV_KEY . "&passage={$query}"
         . "&include-passage-horizontal-lines=false&include-heading-horizontal-lines=false"
         . "&include-headings=false&output-format=plain-text";
 
@@ -95,7 +95,7 @@ if ($result['action'] == 'ESV_Passage') {
 if ($result['action'] == 'ESV_VOTD') {
 
     // Web service URL
-    $url = ESV_BASEURL . "/dailyVerse?key=" . ESV_KEY . "&include-headings=false&output-format=plain-text"
+    $url = ESV_BASEURL . "dailyVerse?key=" . ESV_KEY . "&include-headings=false&output-format=plain-text"
         . "&include-passage-horizontal-lines=false&include-heading-horizontal-lines=false";
 
     // Set up CURL
@@ -137,7 +137,7 @@ if ($result['action'] == 'ESV_ReadingPlan') {
     $today = date('Y-m-d');
 
     // Web service URL
-    $url = ESV_BASEURL . "/readingPlanQuery?key=" . ESV_KEY . "&date={$today}&output-format=plain-text";
+    $url = ESV_BASEURL . "readingPlanQuery?key=" . ESV_KEY . "&date={$today}&output-format=plain-text";
 
     // Set up CURL
     $ch = curl_init($url);
