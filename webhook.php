@@ -141,11 +141,25 @@ if ($result['action'] == 'ESV_ReadingPlan') {
 
 
     /**
+     * Shorten the url with shortify
+     */
+    $short = file_get_contents('http://jd.ax/api/url/shorten/?url=' . $url);
+
+    if (substr($short, 0, 1) == 1) {
+        // Success!
+        $text = $short;
+    } else {
+        // Fail! Fall back to the full url.
+        $text = $url;
+    }
+
+
+    /**
      * Format a webhook response object to be returned by the webhook.
      */
     $webhook = new stdClass();
-    $webhook->speech = $url;
-    $webhook->displayText = $url;
+    $webhook->speech = $text;
+    $webhook->displayText = $text;
     //$webhook->data = new stdClass();
     //$webhook->data->contextOut = Array(
     //        new stdClass()
