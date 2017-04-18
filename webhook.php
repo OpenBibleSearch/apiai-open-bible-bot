@@ -140,12 +140,21 @@ if ($result['action'] == 'ESV_ReadingPlan') {
     // Web service URL
     $url = ESV_BASEURL . "readingPlanQuery?key=IP&date={$today}&reading-plan=through-the-bible";
 
-    error_log(phpversion());
+    // this is much simpler in PHP 7+!
+    $text = shortenWithRebrandly($url) ?? shortenWithShortify($url) ?? $url;
 
-    if (version_compare(phpversion(), '7.0.0', 'ge')) {
-        //$text = shortenWithRebrandly($url) ?? shortenWithShortify($url) ?? $url;
+    // but, for legacy versions...
+    $short = shortenWithRebrandly($url);
+    $text = $url;
+    
+    if ($short) {
+        $text = $short;
     } else {
-        error_log("php version too low!");
+        $short = shortenWithShortify($url);
+
+        if ($short) {
+            $text = $short;
+        }
     }
 
 
