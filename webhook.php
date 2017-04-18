@@ -34,6 +34,7 @@ $result = $_POST['result'];
 switch ($result['action']) {
     case 'ESV_Passage':
     case 'ESV_VOTD':
+    case 'ESD_ReadingPlan':
         break;
     default:
         leave();
@@ -54,7 +55,9 @@ if ($result['action'] == 'ESV_Passage') {
 
 
     // Web service URL
-    $url = ESV_BASEURL . "/passageQuery?key=" . ESV_KEY . "&passage={$query}&include-headings=false&output-format=plain-text";
+    $url = ESV_BASEURL . "/passageQuery?key=" . ESV_KEY . "&passage={$query}"
+        . "&include-passage-horizontal-lines=false&include-heading-horizontal-lines=false"
+        . "&include-headings=false&output-format=plain-text";
 
     // Set up CURL
     $ch = curl_init($url);
@@ -69,8 +72,7 @@ if ($result['action'] == 'ESV_Passage') {
     curl_close($ch);
 
     // Parse the response
-    $text = preg_replace('/=+\\n/i', '', $data);
-    $text = preg_replace('/_+/i', '', $text);
+    $text = $data;
 
 
     /**
@@ -93,7 +95,8 @@ if ($result['action'] == 'ESV_Passage') {
 if ($result['action'] == 'ESV_VOTD') {
 
     // Web service URL
-    $url = ESV_BASEURL . "/dailyVerse?key=" . ESV_KEY . "&include-headings=false&output-format=plain-text";
+    $url = ESV_BASEURL . "/dailyVerse?key=" . ESV_KEY . "&include-headings=false&output-format=plain-text"
+        . "&include-passage-horizontal-lines=false&include-heading-horizontal-lines=false";
 
     // Set up CURL
     $ch = curl_init($url);
@@ -108,8 +111,48 @@ if ($result['action'] == 'ESV_VOTD') {
     curl_close($ch);
 
     // Parse the response
-    $text = preg_replace('/=+\\n/i', '', $data);
-    $text = preg_replace('/_+/i', '', $text);
+    $text = $data;
+
+
+    /**
+     * Format a webhook response object to be returned by the webhook.
+     */
+    $webhook = new stdClass();
+    $webhook->speech = $text;
+    $webhook->displayText = $text;
+    //$webhook->data = new stdClass();
+    //$webhook->data->contextOut = Array(
+    //        new stdClass()
+    //);
+    $webhook->source = 'apiai-openbible-bot';
+}
+
+
+/**
+ * Handle the ESV_ReadingPlan action
+ */
+if ($result['action'] == 'ESV_ReadingPlan') {
+
+    // Today's date in YYYY-MM-DD format
+    $today = date('Y-m-d');
+
+    // Web service URL
+    $url = ESV_BASEURL . "/readingPlanQuery?key=" . ESV_KEY . "&date={$today}&output-format=plain-text";
+
+    // Set up CURL
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    // Execute the POST request
+    $data = curl_exec($ch);
+
+    // Close the connection
+    curl_close($ch);
+
+    // Parse the response
+    $text = $data;
 
 
     /**
