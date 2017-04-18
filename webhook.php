@@ -145,15 +145,17 @@ if ($result['action'] == 'ESV_ReadingPlan') {
 
     // but, for legacy versions...
     $short = shortenWithRebrandly($url);
-    $text = $url;
+    $text = $date->format('M j');
 
     if ($short) {
-        $text = $short;
+        $text .= " {$short}";
     } else {
         $short = shortenWithShortify($url);
 
         if ($short) {
-            $text = $short;
+            $text .= $short;
+        } else {
+            $text .= $url;
         }
     }
 
@@ -202,7 +204,7 @@ function shortenWithRebrandly($url) {
 
     if (strlen($json) > 0 && json_last_error() == JSON_ERROR_NONE) {
         // Success!
-        return $date->format('M j') . ' http://' . $link->shortUrl;
+        return 'http://' . $link->shortUrl;
     }
 
     return null;
@@ -217,7 +219,7 @@ function shortenWithShortify($url) {
 
     if (substr($short, 0, 1) == 1) {
         // Success!
-        return $date->format('M j') . ' ' . substr($short, 2);
+        return substr($short, 2);
     }
 
     return null;
