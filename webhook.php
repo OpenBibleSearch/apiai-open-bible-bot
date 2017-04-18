@@ -137,7 +137,8 @@ if ($result['action'] == 'ESV_ReadingPlan') {
     $today = date('Y-m-d');
 
     // Web service URL
-    $url = ESV_BASEURL . "readingPlanQuery?key=" . ESV_KEY . "&date={$today}&output-format=plain-text";
+    $url = ESV_BASEURL . "readingPlanQuery?key=" . ESV_KEY . "&date={$today}"
+        . "&reading-plan=through-the-bible&output-format=plain-text";
 
     // Set up CURL
     $ch = curl_init($url);
