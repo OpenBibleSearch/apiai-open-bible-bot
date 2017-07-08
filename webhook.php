@@ -48,6 +48,11 @@ $webhook = null;
 if ($result['action'] == 'ESV_Passage') {
     $pattern = '/^(?:!)?(?:(bb)|(biblebot)|(bible)|(esv)|(kjv)\\s+)/i';
 
+    // The machine learning sometimes gets it wrong. Bail out if the query doesn't match anything
+    if (!preg_match($pattern, trim($result['resolvedQuery']))) {
+        exit()
+    }
+
     $query = preg_replace($pattern, '', trim($result['resolvedQuery']));
     $query = preg_replace('/\s+/', '+', $query);
 
@@ -68,11 +73,18 @@ if ($result['action'] == 'ESV_Passage') {
     // Execute the POST request
     $data = curl_exec($ch);
 
+    // Capture any errors that may have occurred
+    $error = curl_errno($ch)
+
     // Close the connection
     curl_close($ch);
 
     // Parse the response
-    $text = $data;
+    if ($error) {
+        $text = "Oops! I wasn't able to look that up for you. Please double check your scripture reference.";
+    } else {
+        $text = $data;
+    }
 
 
     /**
