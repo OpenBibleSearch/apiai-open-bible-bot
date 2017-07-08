@@ -50,7 +50,7 @@ if ($result['action'] == 'ESV_Passage') {
 
     // The machine learning sometimes gets it wrong. Bail out if the query doesn't match anything
     if (!preg_match($pattern, trim($result['resolvedQuery']))) {
-        exit()
+        exit();
     }
 
     $query = preg_replace($pattern, '', trim($result['resolvedQuery']));
