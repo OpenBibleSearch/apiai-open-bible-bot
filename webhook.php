@@ -31,7 +31,7 @@ $result = $_POST['result'];
 /**
  * Log the request for debugging
  */
-error_log(print_r($_POST['result']));
+//error_log(print_r($_POST['result']));
 
 /**
  * Bail out if an action was requested that isn't supported by this webhook.
