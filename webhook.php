@@ -74,7 +74,7 @@ if ($result['action'] == 'ESV_Passage') {
     $data = curl_exec($ch);
 
     // Capture any errors that may have occurred
-    $error = curl_errno($ch)
+    $error = curl_errno($ch);
 
     // Close the connection
     curl_close($ch);
