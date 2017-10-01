@@ -57,7 +57,7 @@ $webhook = null;
  * Handle the ESV_Passage action
  */
 if ($result['action'] == 'ESV_Passage') {
-    $pattern = '/^(?:!)?(?:(bb)|(biblebot)|(bible)|(esv)|(kjv) listen\\s+)/i';
+    $pattern = '/^(?:!)?(?:(bb)|(biblebot)|(bible)|(esv)|(kjv)\\s+)/i';
 
     // The machine learning sometimes gets it wrong. Bail out if the query doesn't match anything
     if (!preg_match($pattern, trim($result['resolvedQuery']))) {
@@ -200,7 +200,7 @@ if ($result['action'] == 'ESV_ReadingPlan') {
  */
 if ($result['action'] == 'ESV_Listen') {
 
-    $pattern = '/^(?:!)?(?:(bb)|(biblebot)|(bible)|(esv)|(kjv)\\s+)/i';
+    $pattern = '/^(?:!)?(?:(bblisten)|(bbl)\\s+)/i';
 
     // The machine learning sometimes gets it wrong. Bail out if the query doesn't match anything
     if (!preg_match($pattern, trim($result['resolvedQuery']))) {
