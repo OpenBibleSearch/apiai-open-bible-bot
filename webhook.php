@@ -3,6 +3,11 @@
 require_once('config.php');
 
 /**
+ * Define ESVAPI.org Endpoints
+ */
+//define('ESVAPI_PASSAGE', 'passage/text/');
+
+/**
  * JSON data is POSTed directly, not as a parameter. Retrieve it and decode it.
  */
 $_POST = json_decode(file_get_contents('php://input'), true);
@@ -40,6 +45,7 @@ switch ($result['action']) {
     case 'ESV_Passage':
     case 'ESV_VOTD':
     case 'ESV_ReadingPlan':
+    case 'ESV_Listen':
         break;
     default:
         leave();
@@ -51,7 +57,7 @@ $webhook = null;
  * Handle the ESV_Passage action
  */
 if ($result['action'] == 'ESV_Passage') {
-    $pattern = '/^(?:!)?(?:(bb)|(biblebot)|(bible)|(esv)|(kjv)\\s+)/i';
+    $pattern = '/^(?:!)?(?:(bb)|(biblebot)|(bible)|(esv)|(kjv) listen\\s+)/i';
 
     // The machine learning sometimes gets it wrong. Bail out if the query doesn't match anything
     if (!preg_match($pattern, trim($result['resolvedQuery']))) {
@@ -173,6 +179,71 @@ if ($result['action'] == 'ESV_ReadingPlan') {
 
     $text .= $short;
 
+
+
+    /**
+     * Format a webhook response object to be returned by the webhook.
+     */
+    $webhook = new stdClass();
+    $webhook->speech = $text;
+    $webhook->displayText = $text;
+    //$webhook->data = new stdClass();
+    //$webhook->data->contextOut = Array(
+    //        new stdClass()
+    //);
+    $webhook->source = 'apiai-openbible-bot';
+}
+
+
+/**
+ * Handle the ESV_Listen action
+ */
+if ($result['action'] == 'ESV_Listen') {
+
+    $pattern = '/^(?:!)?(?:(bb)|(biblebot)|(bible)|(esv)|(kjv)\\s+)/i';
+
+    // The machine learning sometimes gets it wrong. Bail out if the query doesn't match anything
+    if (!preg_match($pattern, trim($result['resolvedQuery']))) {
+        exit();
+    }
+
+    $query = preg_replace($pattern, '', trim($result['resolvedQuery']));
+    $query = preg_replace('/\s+/', '+', $query);
+
+    // Web service URL
+    $url = ESV_BASEURL . "passageQuery?key=" . ESV_KEY . "&passage={$query}"
+        . "&output-format=mp3";
+
+    // Set up CURL
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    // Execute the POST request
+    $data = curl_exec($ch);
+
+    // Capture any errors that may have occurred
+    $error = curl_errno($ch);
+
+    // Close the connection
+    curl_close($ch);
+
+    // Parse the response
+    if ($error) {
+        $text = "Oops! I wasn't able to look that up for you. Please double check your scripture reference.";
+    } else {
+        $url = $data;
+        $short = null;
+
+        if (!shortenWithRebrandly($url, $short)) {
+            if (!shortenWithShortify($url, $short)) {
+                $short = $url;
+            }
+        }
+
+        $text = $short;
+    }
 
 
     /**
