@@ -200,7 +200,7 @@ if ($result['action'] == 'ESV_ReadingPlan') {
  */
 if ($result['action'] == 'ESV_Listen') {
 
-    $pattern = '/^(?:!)?(?:(bblisten)|(bbl)\\s+)/i';
+    $pattern = '/^(?:!)?(?:(listento)\\s+)/i';
 
     // The machine learning sometimes gets it wrong. Bail out if the query doesn't match anything
     if (!preg_match($pattern, trim($result['resolvedQuery']))) {
