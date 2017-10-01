@@ -242,7 +242,7 @@ if ($result['action'] == 'ESV_Listen') {
             }
         }
 
-        $text = $short;
+        $text = "Listen: " . $short;
     }
 
 
