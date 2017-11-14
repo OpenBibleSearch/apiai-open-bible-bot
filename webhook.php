@@ -5,10 +5,7 @@ require_once('config.php');
 /**
  * Override ESV_API key with environment variable if it exists
  */
-$key = getenv('ESV_KEY');
-if ($key !== false) {
-    define('ESV_KEY', $key);
-}
+$ESV_KEY = getenv('ESV_KEY', ESV_KEY);
 
 /**
  * Define ESVAPI.org Endpoints
@@ -79,7 +76,7 @@ if ($result['action'] == 'ESV_Passage') {
 
 
     // Web service URL
-    $url = ESV_BASEURL . "passageQuery?key=" . ESV_KEY . "&passage={$query}"
+    $url = ESV_BASEURL . "passageQuery?key=" . $ESV_KEY . "&passage={$query}"
         . "&include-passage-horizontal-lines=false&include-heading-horizontal-lines=false"
         . "&include-headings=false&output-format=plain-text";
 
@@ -126,7 +123,7 @@ if ($result['action'] == 'ESV_Passage') {
 if ($result['action'] == 'ESV_VOTD') {
 
     // Web service URL
-    $url = ESV_BASEURL . "dailyVerse?key=" . ESV_KEY . "&include-headings=false&output-format=plain-text"
+    $url = ESV_BASEURL . "dailyVerse?key=" . $ESV_KEY . "&include-headings=false&output-format=plain-text"
         . "&include-passage-horizontal-lines=false&include-heading-horizontal-lines=false";
 
     // Set up CURL
@@ -169,7 +166,7 @@ if ($result['action'] == 'ESV_ReadingPlan') {
     $today = $date->format('Y-m-d');
 
     // Web service URL
-    $url = ESV_BASEURL . "readingPlanQuery?key=IP&date={$today}&reading-plan=through-the-bible";
+    $url = ESV_BASEURL . "readingPlanQuery?key=" . $ESV_KEY . "&date={$today}&reading-plan=through-the-bible";
 
     $text = $date->format('M j') . ' ';
 
@@ -219,7 +216,7 @@ if ($result['action'] == 'ESV_Listen') {
     $query = preg_replace('/\s+/', '+', $query);
 
     // Web service URL
-    $url = ESV_BASEURL . "passageQuery?key=" . ESV_KEY . "&passage={$query}"
+    $url = ESV_BASEURL . "passageQuery?key=" . $ESV_KEY . "&passage={$query}"
         . "&output-format=mp3";
 
     // Set up CURL
@@ -298,7 +295,7 @@ function shortenWithRebrandly($url, &$short) {
 
     if (strlen($json) > 0 && json_last_error() == JSON_ERROR_NONE) {
         // Success!
-        $short = 'http://' . $link->shortUrl;
+        $short = 'https://' . $link->shortUrl;
 
         return true;
     }
