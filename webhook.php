@@ -3,6 +3,14 @@
 require_once('config.php');
 
 /**
+ * Override ESV_API key with environment variable if it exists
+ */
+$key = getenv("ESV_KEY");
+if ($key !== false) {
+    define('ESV_KEY', $key);
+}
+
+/**
  * Define ESVAPI.org Endpoints
  */
 //define('ESVAPI_PASSAGE', 'passage/text/');

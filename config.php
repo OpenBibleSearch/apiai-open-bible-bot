@@ -6,7 +6,7 @@
 define('ESV_BASEURL', 'http://www.esvapi.org/v2/rest/');
 
 /**
- * Access Key for ESV API (use TEST for testing, use IP for general-purpose)
+ * Access Key for ESV API (use TEST for testing, can be overridden by ESV_KEY environment variable)
  */
 define('ESV_KEY', 'TEST');
 
