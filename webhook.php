@@ -15,7 +15,9 @@ $ESV_KEY = getenv('ESV_KEY', ESV_KEY);
 /**
  * JSON data is POSTed directly, not as a parameter. Retrieve it and decode it.
  */
-ini_set('always_populate_raw_post_data', '-1');
+if (ini_get('always_populate_raw_post_data') === false) {
+    ini_set('always_populate_raw_post_data', '-1');
+}
 $_POST = json_decode(file_get_contents('php://input'), true);
 //$_POST = json_decode(file_get_contents('jsontest.js'), true);
 
