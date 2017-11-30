@@ -110,7 +110,13 @@ if ($result['action'] == 'ESV_Passage') {
     if ($error) {
         $text = "Oops! I wasn't able to look that up for you. Please double check your scripture reference.";
     } else {
-        $text = $data;
+        //$text = $data;
+        $response = json_decode($data);
+        if (count($response->passages) > 1) {
+            $text = join($response->passages, '\n\n');
+        } else {
+            $text = $response->passages[0];
+        }
     }
 
 
