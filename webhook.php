@@ -88,6 +88,7 @@ if ($result['action'] == 'ESV_Passage') {
     $url = ESVAPI_PASSAGE . "q={$query}"
         . "&include-passage-horizontal-lines=false&include-heading-horizontal-lines=false"
         . "&include-headings=false";
+    error_log($url);
 
     // Set up CURL
     $ch = curl_init($url);
