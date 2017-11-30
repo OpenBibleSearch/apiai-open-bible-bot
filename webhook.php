@@ -85,7 +85,7 @@ if ($result['action'] == 'ESV_Passage') {
 
 
     // Web service URL
-    $url = ESVAPI_PASSAGE . "q={$query}"
+    $url = ESVAPI_PASSAGE . "?q={$query}"
         . "&include-passage-horizontal-lines=false&include-heading-horizontal-lines=false"
         . "&include-headings=false";
     error_log($url);
