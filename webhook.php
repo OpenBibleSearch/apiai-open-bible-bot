@@ -3,6 +3,16 @@
 require_once('config.php');
 
 /**
+ * Define character limit for messages
+ */
+define("CHAR_LIMIT", 2000);
+
+/**
+ * Define text for truncated messages
+ */
+define("TRUNCATED", " (message length exceeded)");
+
+/**
  * Override ESV_API key with environment variable if it exists
  */
 $ESV_KEY = getenv('ESV_KEY', ESV_KEY);
@@ -120,9 +130,8 @@ if ($result['action'] == 'ESV_Passage') {
     }
 
     // truncate strings longer than 2000 characters...
-    $message = " (message length exceeded)";
-    if (strlen($text) > 2000) {
-        $text = substr($text, 0, 2000 - strlen($message)) . $message;
+    if (strlen($text) > CHAR_LIMIT) {
+        $text = substr($text, 0, CHAR_LIMIT - strlen(TRUNCATED)) . TRUNCATED;
     }
 
 
