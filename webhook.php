@@ -6,7 +6,7 @@ require_once('config.php');
  * Override ESV_API key with environment variable if it exists
  */
 $ESV_KEY = getenv('ESV_KEY', ESV_KEY);
-$headers[] = 'Authorization: Token ' . $ESV_API;
+$headers[] = 'Authorization: Token ' . $ESV_KEY;
 
 /**
  * Override REBRANDLY_API key with environment variable if it exists
