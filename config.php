@@ -4,7 +4,7 @@
  * Base URL for ESV API requests
  */
 define('ESV_BASEURL_V2', 'http://www.esvapi.org/v2/rest/');
-define('ESV_BASEURL', 'https://api.esv.org/v3/');
+define('ESV_BASEURL', 'http://www.esvapi.org/v3/');
 
 /**
  * Access Key for ESV API (use TEST for testing, can be overridden by ESV_KEY environment variable)
