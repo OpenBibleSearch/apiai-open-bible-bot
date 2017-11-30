@@ -6,7 +6,7 @@ require_once('config.php');
  * Override ESV_API key with environment variable if it exists
  */
 $ESV_KEY = getenv('ESV_KEY', ESV_KEY);
-error_log($ESV_KEY);
+$headers[] = 'Authorization: Token ' . $ESV_API;
 
 /**
  * Define ESVAPI.org Endpoints
@@ -86,6 +86,7 @@ if ($result['action'] == 'ESV_Passage') {
 
     // Set up CURL
     $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_TIMEOUT, 5);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -132,6 +133,7 @@ if ($result['action'] == 'ESV_VOTD') {
 
     // Set up CURL
     $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_TIMEOUT, 5);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -225,6 +227,7 @@ if ($result['action'] == 'ESV_Listen') {
 
     // Set up CURL
     $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_TIMEOUT, 5);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
