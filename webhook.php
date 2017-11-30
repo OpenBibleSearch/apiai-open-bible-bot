@@ -119,6 +119,12 @@ if ($result['action'] == 'ESV_Passage') {
         }
     }
 
+    // truncate strings longer than 2000 characters...
+    $message = " (message length exceeded)";
+    if (strlen($text) > 2000) {
+        $text = substr($text, 0, 2000 - strlen($message)) . $message;
+    }
+
 
     /**
      * Format a webhook response object to be returned by the webhook.
