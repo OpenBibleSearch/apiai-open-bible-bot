@@ -130,6 +130,7 @@ if ($result['action'] == 'ESV_Passage') {
     }
 
     // truncate strings longer than 2000 characters...
+    error_log("message length: " . strlen($text));
     if (strlen($text) > CHAR_LIMIT) {
         $text = substr($text, 0, CHAR_LIMIT - strlen(TRUNCATED)) . TRUNCATED;
     }
