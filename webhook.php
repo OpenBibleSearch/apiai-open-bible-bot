@@ -9,9 +9,14 @@ $ESV_KEY = getenv('ESV_KEY', ESV_KEY);
 $headers[] = 'Authorization: Token ' . $ESV_API;
 
 /**
+ * Override REBRANDLY_API key with environment variable if it exists
+ */
+$REBRANDLY_KEY = getenv('REBRANDLY_KEY', REBRANDLY_KEY);
+
+/**
  * Define ESVAPI.org Endpoints
  */
-//define('ESVAPI_PASSAGE', 'passage/text/');
+define('ESVAPI_PASSAGE', ESV_BASEURL . 'passage/text/');
 
 /**
  * JSON data is POSTed directly, not as a parameter. Retrieve it and decode it.
@@ -80,9 +85,9 @@ if ($result['action'] == 'ESV_Passage') {
 
 
     // Web service URL
-    $url = ESV_BASEURL . "passageQuery?key=" . $ESV_KEY . "&passage={$query}"
+    $url = ESVAPI_PASSAGE . "q={$query}"
         . "&include-passage-horizontal-lines=false&include-heading-horizontal-lines=false"
-        . "&include-headings=false&output-format=plain-text";
+        . "&include-headings=false";
 
     // Set up CURL
     $ch = curl_init($url);
@@ -128,7 +133,7 @@ if ($result['action'] == 'ESV_Passage') {
 if ($result['action'] == 'ESV_VOTD') {
 
     // Web service URL
-    $url = ESV_BASEURL . "dailyVerse?key=" . $ESV_KEY . "&include-headings=false&output-format=plain-text"
+    $url = ESV_BASEURL_V2 . "dailyVerse?key=TEST&include-headings=false&output-format=plain-text"
         . "&include-passage-horizontal-lines=false&include-heading-horizontal-lines=false";
 
     // Set up CURL
@@ -172,7 +177,7 @@ if ($result['action'] == 'ESV_ReadingPlan') {
     $today = $date->format('Y-m-d');
 
     // Web service URL
-    $url = ESV_BASEURL . "readingPlanQuery?key=" . $ESV_KEY . "&date={$today}&reading-plan=through-the-bible";
+    $url = ESV_BASEURL_V2 . "readingPlanQuery?key=TEST&date={$today}&reading-plan=through-the-bible";
 
     $text = $date->format('M j') . ' ';
 
@@ -222,7 +227,7 @@ if ($result['action'] == 'ESV_Listen') {
     $query = preg_replace('/\s+/', '+', $query);
 
     // Web service URL
-    $url = ESV_BASEURL . "passageQuery?key=" . $ESV_KEY . "&passage={$query}"
+    $url = ESV_BASEURL_V2 . "passageQuery?key=TEST&passage={$query}"
         . "&output-format=mp3";
 
     // Set up CURL
@@ -295,7 +300,7 @@ function leave() {
  * Shorten the url with Rebrandly
  */
 function shortenWithRebrandly($url, &$short) {
-    $json = file_get_contents(REBRANDLY_BASEURL . 'links/new?apikey=' . REBRANDLY_KEY
+    $json = file_get_contents(REBRANDLY_BASEURL . 'links/new?apikey=' . $REBRANDLY_KEY
         . "&destination={$url}&domain[fullName]=biblebot.click");
 
     $link = json_decode($json);
