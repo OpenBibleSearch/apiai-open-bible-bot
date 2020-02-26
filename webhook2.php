@@ -319,6 +319,8 @@ if ($result['action'] == 'Strong_Lookup') {
         $text = substr($text, 0, CHAR_LIMIT - strlen(TRUNCATED)) . TRUNCATED;
     }
 
+    error_log($text);
+
 
     /**
      * Format a webhook response object to be returned by the webhook.
