@@ -297,11 +297,11 @@ if ($result['action'] == 'Strong_Lookup') {
     $entry = strtoupper($matches[1]);
     $filename = $entry .  '.json';
 
-    if (!file_exists(__DIR__ . $filename)) {
+    if (!file_exists(__DIR__ . 'entries/' . $filename)) {
         $text = "Hmm, I can't find " . strtoupper($matches[1]);
     } else {
         // Get the file contents
-        $json = file_get_contents(__DIR__ . $filename);
+        $json = file_get_contents(__DIR__ . 'entries/' . $filename);
 
         $data = json_decode($json, TRUE);
 
