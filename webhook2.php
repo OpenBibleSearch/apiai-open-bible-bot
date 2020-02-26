@@ -41,19 +41,15 @@ $_POST = json_decode(file_get_contents('php://input'), true);
 /**
  * If there was an error parsing the JSON, we should probably bail here.
  */
-if (json_last_error() !== JSON_ERROR_NONE) {
-    $text = json_last_error();
-    leave();
-}
+if (json_last_error() !== JSON_ERROR_NONE)
+    leave(json_last_error());
 
 
 /**
  * A simple check to see if the JSON data is structured correctly.
  */
-if (!isset($_POST['session']) || empty($_POST['session'])) {
-    $text = "Invalid JSON";
-    leave();
-}
+if (!isset($_POST['session']) || empty($_POST['session']))
+    leave("Invalid JSON");
 
 
 /**
@@ -64,7 +60,7 @@ $result = $_POST['queryResult'];
 /**
  * Log the request for debugging
  */
-error_log(print_r($_POST['queryResult']));
+error_log("Post: " . print_r($_POST));
 
 /**
  * Bail out if an action was requested that isn't supported by this webhook.
@@ -77,8 +73,7 @@ switch ($result['action']) {
     case 'Strong_Lookup':
         break;
     default:
-        $text = "Action does not exist";
-        leave();
+        leave("Action does not exist");
 }
 $webhook = null;
 
@@ -342,9 +337,8 @@ echo json_encode($webhook);
 
 exit();
 
-function leave() {
+function leave($text="Webhook ended prematurely") {
     $webhook = new stdClass();
-    //$webhook->fulfillmentText = 'Webhook ended prematurely';
     $webhook->fulfillmentText = $text;
     $webhook->source = 'apiai-openbible-bot';
     header('Content-type: application/json;charset=utf-8');
