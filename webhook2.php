@@ -272,8 +272,9 @@ if ($result['action'] == 'Strong_Lookup') {
         $lemma = $data['lemma'];
         $kjv_def = $data['kjv_def'];
         $strongs_def = $data['strongs_def'];
+        $pron = ($data['pron']) ? $data['pron'] : '';
 
-        $text = $entry . '  ' . $lemma . "\n\n" . $derivation . "\n\n" . $strongs_def;
+        $text = $entry . '  ' . $data['lemma'] . '  ' . $pron . "\n\n" . $data['derivation'] . "\n\n" . $data['strongs_def'];
     }
 
     // truncate strings longer than 2000 characters...
