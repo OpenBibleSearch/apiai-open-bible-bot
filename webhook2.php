@@ -41,26 +41,30 @@ $_POST = json_decode(file_get_contents('php://input'), true);
 /**
  * If there was an error parsing the JSON, we should probably bail here.
  */
-if (json_last_error() !== JSON_ERROR_NONE)
+if (json_last_error() !== JSON_ERROR_NONE) {
+    $text = json_last_error();
     leave();
+}
 
 
 /**
  * A simple check to see if the JSON data is structured correctly.
  */
-if (!isset($_POST['session']) || empty($_POST['session']))
+if (!isset($_REQUEST['session']) || empty($_REQUEST['session'])) {
+    $text = "Invalid JSON";
     leave();
+}
 
 
 /**
  * Get the result object from our JSON. It contains the information we need.
  */
-$result = $_POST['queryResult'];
+$result = $_REQUEST['queryResult'];
 
 /**
  * Log the request for debugging
  */
-error_log(print_r($_POST['queryResult']));
+error_log(print_r($_REQUEST['queryResult']));
 
 /**
  * Bail out if an action was requested that isn't supported by this webhook.
@@ -339,7 +343,8 @@ exit();
 
 function leave() {
     $webhook = new stdClass();
-    $webhook->fulfillmentText = 'Webhook ended prematurely';
+    //$webhook->fulfillmentText = 'Webhook ended prematurely';
+    $webhook->fulfillmentText = $text;
     $webhook->source = 'apiai-openbible-bot';
     header('Content-type: application/json;charset=utf-8');
     echo json_encode($webhook);
