@@ -50,7 +50,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 /**
  * A simple check to see if the JSON data is structured correctly.
  */
-if (!isset($_REQUEST['session']) || empty($_REQUEST['session'])) {
+if (!isset($_POST['session']) || empty($_POST['session'])) {
     $text = "Invalid JSON";
     leave();
 }
@@ -59,12 +59,12 @@ if (!isset($_REQUEST['session']) || empty($_REQUEST['session'])) {
 /**
  * Get the result object from our JSON. It contains the information we need.
  */
-$result = $_REQUEST['queryResult'];
+$result = $_POST['queryResult'];
 
 /**
  * Log the request for debugging
  */
-error_log(print_r($_REQUEST['queryResult']));
+error_log(print_r($_POST['queryResult']));
 
 /**
  * Bail out if an action was requested that isn't supported by this webhook.
