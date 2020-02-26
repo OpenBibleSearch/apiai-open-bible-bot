@@ -69,7 +69,7 @@ switch ($result['action']) {
     case 'Strong_Lookup':
         break;
     default:
-        leave("Action does not exist");
+        leave("Sorry. I haven't learned that one yet.");
 }
 $webhook = null;
 
