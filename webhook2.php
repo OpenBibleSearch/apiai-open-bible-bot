@@ -57,10 +57,10 @@ if (!isset($_POST['session']) || empty($_POST['session']))
  */
 $result = $_POST['queryResult'];
 
-/**
- * Log the request for debugging
- */
-error_log($result);
+
+error_log(__DIR__);
+error_log(getcwd());
+
 
 /**
  * Bail out if an action was requested that isn't supported by this webhook.
@@ -171,13 +171,6 @@ if ($result['action'] == 'ESV_VOTD') {
     // Parse the response
     $text = $data;
 
-
-    /**
-     * Format a webhook response object to be returned by the webhook.
-     */
-    $webhook = new stdClass();
-    $webhook->fulfillmentText = $text;
-    $webhook->source = 'apiai-openbible-bot';
 }
 
 
@@ -209,14 +202,6 @@ if ($result['action'] == 'ESV_ReadingPlan') {
 
     $text .= $short;
 
-
-
-    /**
-     * Format a webhook response object to be returned by the webhook.
-     */
-    $webhook = new stdClass();
-    $webhook->fulfillmentText = $text;
-    $webhook->source = 'apiai-openbible-bot';
 }
 
 
@@ -271,13 +256,6 @@ if ($result['action'] == 'ESV_Listen') {
         $text = "Listen: " . $short;
     }
 
-
-    /**
-     * Format a webhook response object to be returned by the webhook.
-     */
-    $webhook = new stdClass();
-    $webhook->fulfillmentText = $text;
-    $webhook->source = 'apiai-openbible-bot';
 }
 
 
@@ -320,15 +298,15 @@ if ($result['action'] == 'Strong_Lookup') {
     }
 
     error_log($text);
-
-
-    /**
-     * Format a webhook response object to be returned by the webhook.
-     */
-    $webhook = new stdClass();
-    $webhook->fulfillmentText = $text;
-    $webhook->source = 'apiai-openbible-bot';
 }
+
+
+/**
+ * Format a webhook response object to be returned by the webhook.
+ */
+$webhook = new stdClass();
+$webhook->fulfillmentText = $text;
+$webhook->source = 'apiai-openbible-bot';
 
 
 /**
