@@ -70,6 +70,7 @@ switch ($result['action']) {
     case 'ESV_VOTD':
     case 'ESV_ReadingPlan':
     case 'ESV_Listen':
+    case 'Strong_Lookup':
         break;
     default:
         leave();
@@ -140,12 +141,6 @@ if ($result['action'] == 'ESV_Passage') {
      * Format a webhook response object to be returned by the webhook.
      */
     $webhook = new stdClass();
-    //$webhook->speech = $text;
-    //$webhook->displayText = $text;
-    //$webhook->data = new stdClass();
-    //$webhook->data->contextOut = Array(
-    //        new stdClass()
-    //);
     $webhook->fulfillmentText = $text;
     $webhook->source = 'apiai-openbible-bot';
 }
@@ -181,12 +176,6 @@ if ($result['action'] == 'ESV_VOTD') {
      * Format a webhook response object to be returned by the webhook.
      */
     $webhook = new stdClass();
-    //$webhook->speech = $text;
-    //$webhook->displayText = $text;
-    //$webhook->data = new stdClass();
-    //$webhook->data->contextOut = Array(
-    //        new stdClass()
-    //);
     $webhook->fulfillmentText = $text;
     $webhook->source = 'apiai-openbible-bot';
 }
@@ -226,12 +215,6 @@ if ($result['action'] == 'ESV_ReadingPlan') {
      * Format a webhook response object to be returned by the webhook.
      */
     $webhook = new stdClass();
-    //$webhook->speech = $text;
-    //$webhook->displayText = $text;
-    //$webhook->data = new stdClass();
-    //$webhook->data->contextOut = Array(
-    //        new stdClass()
-    //);
     $webhook->fulfillmentText = $text;
     $webhook->source = 'apiai-openbible-bot';
 }
@@ -293,12 +276,54 @@ if ($result['action'] == 'ESV_Listen') {
      * Format a webhook response object to be returned by the webhook.
      */
     $webhook = new stdClass();
-    //$webhook->speech = $text;
-    //$webhook->displayText = $text;
-    //$webhook->data = new stdClass();
-    //$webhook->data->contextOut = Array(
-    //        new stdClass()
-    //);
+    $webhook->fulfillmentText = $text;
+    $webhook->source = 'apiai-openbible-bot';
+}
+
+
+/**
+ * Handle the Strong_Lookup action
+ */
+if ($result['action'] == 'Strong_Lookup') {
+    $pattern = '/^(?:!)?(?:strongs ([H|G]\d+))/i';
+
+    // The machine learning sometimes gets it wrong. Bail out if the query doesn't match anything
+    if (!preg_match($pattern, trim($result['queryText']), $matches)) {
+        exit();
+    }
+
+    //$query = preg_replace($pattern, '', trim($result['queryText']));
+    //$query = preg_replace('/\s+/', '+', $query);
+    $entry = strtoupper($matches[1]);
+    $filename = $entry .  '.json';
+
+    if (!file_exists($filename)) {
+        $text = "Hmm, I can't find " . strtoupper($matches[1]);
+    } else {
+        // Get the file contents
+        $json = file_get_contents('entries/' . $filename);
+
+        $data = json_decode($json, TRUE);
+
+        $derivation = $data['derivation'];
+        $lemma = $data['lemma'];
+        $kjv_def = $data['kjv_def'];
+        $strongs_def = $data['strongs_def'];
+
+        $text = $entry . '  ' . $lemma . "\n\n" . $derivation . "\n\n" . $strongs_def;
+    }
+
+    // truncate strings longer than 2000 characters...
+    error_log("message length: " . strlen($text));
+    if (strlen($text) > CHAR_LIMIT) {
+        $text = substr($text, 0, CHAR_LIMIT - strlen(TRUNCATED)) . TRUNCATED;
+    }
+
+
+    /**
+     * Format a webhook response object to be returned by the webhook.
+     */
+    $webhook = new stdClass();
     $webhook->fulfillmentText = $text;
     $webhook->source = 'apiai-openbible-bot';
 }
@@ -314,8 +339,6 @@ exit();
 
 function leave() {
     $webhook = new stdClass();
-    //$webhook->speech = 'Webhook ended prematurely.';
-    //$webhook->displayText = 'Webhook ended prematurely.';
     $webhook->fulfillmentText = 'Webhook ended prematurely';
     $webhook->source = 'apiai-openbible-bot';
     header('Content-type: application/json;charset=utf-8');
