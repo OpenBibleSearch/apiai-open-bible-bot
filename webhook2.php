@@ -60,7 +60,7 @@ $result = $_POST['queryResult'];
 /**
  * Log the request for debugging
  */
-error_log("Post: " . print_r($_POST));
+error_log($result);
 
 /**
  * Bail out if an action was requested that isn't supported by this webhook.
