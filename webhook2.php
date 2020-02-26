@@ -58,10 +58,6 @@ if (!isset($_POST['session']) || empty($_POST['session']))
 $result = $_POST['queryResult'];
 
 
-error_log(__DIR__);
-error_log(getcwd());
-
-
 /**
  * Bail out if an action was requested that isn't supported by this webhook.
  */
@@ -135,14 +131,6 @@ if ($result['action'] == 'ESV_Passage') {
     if (strlen($text) > CHAR_LIMIT) {
         $text = substr($text, 0, CHAR_LIMIT - strlen(TRUNCATED)) . TRUNCATED;
     }
-
-
-    /**
-     * Format a webhook response object to be returned by the webhook.
-     */
-    $webhook = new stdClass();
-    $webhook->fulfillmentText = $text;
-    $webhook->source = 'apiai-openbible-bot';
 }
 
 
@@ -170,7 +158,6 @@ if ($result['action'] == 'ESV_VOTD') {
 
     // Parse the response
     $text = $data;
-
 }
 
 
@@ -201,7 +188,6 @@ if ($result['action'] == 'ESV_ReadingPlan') {
     }
 
     $text .= $short;
-
 }
 
 
@@ -255,7 +241,6 @@ if ($result['action'] == 'ESV_Listen') {
 
         $text = "Listen: " . $short;
     }
-
 }
 
 
@@ -275,11 +260,11 @@ if ($result['action'] == 'Strong_Lookup') {
     $entry = strtoupper($matches[1]);
     $filename = $entry .  '.json';
 
-    if (!file_exists(__DIR__ . 'entries/' . $filename)) {
-        $text = "Hmm, I can't find " . strtoupper($matches[1]);
+    if (!file_exists('/app/entries/' . $filename)) {
+        $text = "Hmm, I can't find " . $entry;
     } else {
         // Get the file contents
-        $json = file_get_contents(__DIR__ . 'entries/' . $filename);
+        $json = file_get_contents('/app/entries/' . $filename);
 
         $data = json_decode($json, TRUE);
 
